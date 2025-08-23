@@ -80,6 +80,15 @@ You will need a **Hugging Face API Key** to use the image generation features.
 4.  **Generate**: Click the **Generate** button and wait for the magic to happen!
 5.  **Download**: Once an image is generated, hover over it and click the download icon (📥) to save it.
 
+ --- 
+**❗ Important Note: Service Interruption**
+
+Please be aware that the API key for this project is currently experiencing an outage. We apologize for any inconvenience this may cause.
+
+Our team is aware of the issue and is performing a server-side update to fix it. We expect to have the service back up and running shortly.
+
+**➡️ Workaround:** If you have your own API key, you can continue using the project immediately by adding it to the `hand.js` file.
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
