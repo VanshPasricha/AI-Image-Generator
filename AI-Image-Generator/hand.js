@@ -7,7 +7,7 @@ const modelsel=document.querySelector("#modelselect");
 const countimg=document.querySelector("#countimg");
 const sizeimg= document.querySelector("#sizeimg");
 const grid=document.querySelector(".gallery-grid");
-const API_KEY="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";
+const API_KEY="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";
 
 
 const examplePrompts = [
