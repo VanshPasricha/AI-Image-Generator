@@ -10,6 +10,12 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.HF_API_KEY;
+  console.log('Environment check:', {
+    hasApiKey: !!apiKey,
+    keyLength: apiKey ? apiKey.length : 0,
+    keyPrefix: apiKey ? apiKey.substring(0, 3) : 'none'
+  });
+  
   if (!apiKey) {
     return res.status(500).json({ error: 'Server misconfiguration: HF_API_KEY is not set' });
   }
@@ -35,8 +41,16 @@ export default async function handler(req, res) {
       try {
         const errJson = await hfResponse.json();
         errMsg = errJson?.error || errMsg;
+        console.log('HF API Error:', {
+          status: hfResponse.status,
+          statusText: hfResponse.statusText,
+          error: errMsg
+        });
       } catch (e) {
-        // ignore
+        console.log('HF API Error (no JSON):', {
+          status: hfResponse.status,
+          statusText: hfResponse.statusText
+        });
       }
       return res.status(hfResponse.status).json({ error: errMsg });
     }
