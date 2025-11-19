@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profile</title>
+<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/components.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="/js/firebase-config.js"></script>
+</head><body>
+<nav class="navbar">
+  <div class="left">
+    <div class="brand"><div class="logo">AI</div><span>AI Tools</span></div>
+    <div class="links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/services/image-generator">Image</a>
+      <a href="/services/voice-to-text">Voice</a>
+      <a href="/services/chatbot">Chat</a>
+      <a href="/services/summarizer">Summarizer</a>
+      <a href="/history">History</a>
+    </div>
+  </div>
+  <div class="user"><span id="nav-user"></span><button class="btn secondary" data-logout>Logout</button></div>
+</nav>
+<div class="container">
+  <h2>Profile</h2>
+  <form class="form" id="profile-form">
+    <div class="row"><label>Name</label><input id="name" required></div>
+    <div class="row"><label>Email</label><input id="email" disabled></div>
+    <button class="submit" type="submit">Save</button>
+  </form>
+</div>
+<div class="toast"></div>
+<script type="module">
+  import { ensureAuthed, mountNavbar } from '/js/auth.js';
+  import { apiGet, apiPost } from '/js/api.js';
+  import { toast } from '/js/ui.js';
+  await ensureAuthed();
+  mountNavbar('profile');
+  try{
+    const r = await apiGet('/api/user/profile');
+    document.getElementById('name').value = r.profile.name||'';
+    document.getElementById('email').value = r.profile.email||'';
+  }catch(e){ toast('Failed to load profile'); }
+  document.getElementById('profile-form').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    try{ await apiPost('/api/user/profile',{ name: document.getElementById('name').value.trim() }); toast('Saved'); }
+    catch(e){ toast(e.message||'Failed to save'); }
+  });
+</script>
+</body></html>

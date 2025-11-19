@@ -1,0 +1,14 @@
+{
+  "name": "ai-tools-platform",
+  "version": "1.0.0",
+  "description": "Multi-service AI web application on Vercel",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.5.0"
+  }
+}

@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard</title>
+<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/components.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="/js/firebase-config.js"></script>
+</head><body>
+<nav class="navbar">
+  <div class="left">
+    <div class="brand"><div class="logo">AI</div><span>AI Tools</span></div>
+    <div class="links">
+      <a href="/dashboard" data-active="dashboard">Dashboard</a>
+      <a href="/services/image-generator">Image</a>
+      <a href="/services/voice-to-text">Voice</a>
+      <a href="/services/chatbot">Chat</a>
+      <a href="/services/summarizer">Summarizer</a>
+      <a href="/history">History</a>
+      <a href="/profile">Profile</a>
+    </div>
+  </div>
+  <div class="user"><span id="nav-user"></span><button class="btn secondary" data-logout>Logout</button></div>
+</nav>
+<div class="container">
+  <h2>Welcome, <span id="user-name">User</span> 👋</h2>
+  <p style="color:#9aa3c6">Quick access to all services</p>
+  <div class="card-grid" style="margin:16px 0 28px">
+    <div class="card"><div class="icon">🖼️</div><h3>AI Image Generator</h3><p>Create images from prompts.</p><div class="actions"><a class="btn" href="/services/image-generator">Open</a></div></div>
+    <div class="card"><div class="icon">🎙️</div><h3>Voice to Text</h3><p>Transcribe your audio.</p><div class="actions"><a class="btn" href="/services/voice-to-text">Open</a></div></div>
+    <div class="card"><div class="icon">💬</div><h3>AI Chatbot</h3><p>Ask anything.</p><div class="actions"><a class="btn" href="/services/chatbot">Open</a></div></div>
+    <div class="card"><div class="icon">📝</div><h3>Summarizer</h3><p>Shorten long text.</p><div class="actions"><a class="btn" href="/services/summarizer">Open</a></div></div>
+  </div>
+  <h3>Recent Activity</h3>
+  <div id="recent" class="list"></div>
+</div>
+<div class="toast"></div>
+<script type="module">
+  import { ensureAuthed, mountNavbar } from '/js/auth.js';
+  import { apiGet } from '/js/api.js';
+  import { toast } from '/js/ui.js';
+  await ensureAuthed();
+  mountNavbar('dashboard');
+  try{
+    const r = await apiGet('/api/user/history?limit=5');
+    const list = document.getElementById('recent');
+    if(!r.items.length){ list.innerHTML = '<div class="alert">No recent activity yet.</div>'; }
+    else{
+      list.innerHTML = r.items.map(it=>`<div class='item'><div><b>${it.serviceType}</b></div><div class='meta'>${new Date(it.timestamp).toLocaleString()}</div><div>${it.input? (it.input.length>120? it.input.slice(0,120)+'…': it.input): ''}</div></div>`).join('');
+    }
+  }catch(e){ toast(e.message||'Failed to load history'); }
+</script>
+</body></html>

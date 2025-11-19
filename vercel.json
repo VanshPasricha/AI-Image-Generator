@@ -1,6 +1,17 @@
 {
   "rewrites": [
+    { "source": "/api/generate", "destination": "/api/generate-image" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/", "destination": "/public/landing.html" },
+    { "source": "/login", "destination": "/public/login.html" },
+    { "source": "/signup", "destination": "/public/signup.html" },
+    { "source": "/dashboard", "destination": "/public/dashboard.html" },
+    { "source": "/services/image-generator", "destination": "/public/services/image-generator.html" },
+    { "source": "/services/voice-to-text", "destination": "/public/services/voice-to-text.html" },
+    { "source": "/services/chatbot", "destination": "/public/services/chatbot.html" },
+    { "source": "/services/summarizer", "destination": "/public/services/summarizer.html" },
+    { "source": "/history", "destination": "/public/history.html" },
+    { "source": "/profile", "destination": "/public/profile.html" },
     { "source": "/(.*)", "destination": "/public/$1" }
   ],
   "cleanUrls": true

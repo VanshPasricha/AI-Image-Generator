@@ -1,0 +1,44 @@
+/* Reusable UI components */
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #1a2240;background:#0e1530;position:sticky;top:0;z-index:20}
+.navbar .left{display:flex;gap:10px;align-items:center}
+.navbar .brand{display:flex;gap:8px;align-items:center;font-weight:800}
+.navbar .brand .logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#6a5acd,#00d4ff);display:inline-flex;align-items:center;justify-content:center;color:#0e1530;font-size:16px}
+.navbar .links{display:flex;gap:10px}
+.navbar .links a{color:#cdd3ea;padding:8px 10px;border-radius:8px}
+.navbar .links a.active,.navbar .links a:hover{background:#18224d;color:#fff}
+.navbar .user{display:flex;gap:12px;align-items:center;color:#cfd6ff}
+.navbar .user .name{font-weight:600}
+
+.section-title{font-size:22px;margin:0 0 12px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.card{background:#0f1838;border:1px solid #1a2240;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.card .icon{width:40px;height:40px;border-radius:10px;background:#1b2450;display:flex;align-items:center;justify-content:center;color:#8fb3ff}
+.card .actions{margin-top:auto;display:flex;gap:10px}
+.card .btn{padding:8px 12px;border-radius:10px;background:#3452ff;color:#fff;border:none;cursor:pointer}
+.card .btn.secondary{background:#1a2240;color:#cdd3ea}
+
+.form{max-width:440px;margin:24px auto;padding:20px;border:1px solid #1a2240;border-radius:12px;background:#0f1838}
+.form .row{display:grid;gap:8px;margin-bottom:12px}
+.form label{color:#aeb6de}
+.form input,.form textarea,.form select{padding:10px 12px;border-radius:10px;border:1px solid #263056;background:#0c1430;color:#dbe2ff}
+.form .submit{width:100%;padding:12px;border-radius:10px;background:#3452ff;color:#fff;border:none;font-weight:700;cursor:pointer}
+
+.toast{position:fixed;right:16px;bottom:16px;background:#0f1838;color:#dbe2ff;border:1px solid #1a2240;border-radius:10px;padding:12px 14px;box-shadow:0 5px 30px rgba(0,0,0,.3);opacity:0;transform:translateY(10px);transition:.2s}
+.toast.show{opacity:1;transform:translateY(0)}
+.loading{opacity:.7;pointer-events:none}
+
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{padding:8px 12px;border-radius:10px;background:#101a3f;border:1px solid #2a3568;color:#cbd3ff;cursor:pointer}
+.tab.active{background:#3452ff;border-color:#3452ff;color:#fff}
+.list{display:grid;gap:12px}
+.list .item{padding:12px;border-radius:12px;border:1px solid #1a2240;background:#0f1838}
+.list .meta{font-size:12px;color:#99a2c6}
+
+.chat{display:flex;flex-direction:column;height:70vh;border:1px solid #1a2240;border-radius:12px;overflow:hidden}
+.chat .messages{flex:1;overflow:auto;padding:12px;display:grid;gap:10px;background:#0a132f}
+.chat .bubble{max-width:70%;padding:10px 12px;border-radius:12px}
+.chat .bubble.user{margin-left:auto;background:#1e2c6a}
+.chat .bubble.bot{margin-right:auto;background:#122055}
+.chat .input{display:flex;border-top:1px solid #1a2240}
+.chat .input input{flex:1;border:none;padding:12px;background:#0d1636;color:#d6ddff}
+.chat .input button{border:none;background:#3452ff;color:#fff;padding:12px 16px;cursor:pointer}

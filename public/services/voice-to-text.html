@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voice to Text</title>
+<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/components.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="/js/firebase-config.js"></script>
+</head><body>
+<nav class="navbar">
+  <div class="left">
+    <div class="brand"><div class="logo">AI</div><span>AI Tools</span></div>
+    <div class="links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/services/image-generator">Image</a>
+      <a href="/services/chatbot">Chat</a>
+      <a href="/services/summarizer">Summarizer</a>
+      <a href="/history">History</a>
+      <a href="/profile">Profile</a>
+    </div>
+  </div>
+  <div class="user"><span id="nav-user"></span><button class="btn secondary" data-logout>Logout</button></div>
+</nav>
+<div class="container">
+  <h2>Voice to Text</h2>
+  <div class="card">
+    <div style="display:flex;gap:10px;align-items:center">
+      <button id="record" class="btn">Start Recording</button>
+      <audio id="audio" controls class="hide"></audio>
+      <span id="rec-status" class="meta"></span>
+    </div>
+    <div class="form" style="margin:16px 0 0">
+      <div class="row"><label>Transcript</label><textarea id="transcript" rows="6" readonly></textarea></div>
+      <div style="display:flex;gap:10px">
+        <button id="download" class="btn secondary">Download .txt</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast"></div>
+<script type="module" src="/js/services/voice-to-text.js"></script>
+</body></html>

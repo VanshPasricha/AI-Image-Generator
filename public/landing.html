@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Tools Platform</title>
+<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/components.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head><body>
+<nav class="navbar">
+  <div class="left">
+    <div class="brand"><div class="logo">AI</div><span>AI Tools</span></div>
+    <div class="links">
+      <a href="/login">Login</a>
+      <a href="/signup">Sign Up</a>
+    </div>
+  </div>
+  <div class="user"></div>
+</nav>
+<section class="hero container">
+  <h1>All your favorite AI tools in one place</h1>
+  <p>Generate images, transcribe audio, chat with AI, and summarize text. Built on Hugging Face and Firebase, deployed on Vercel. No frameworks—just clean HTML/CSS/JS.</p>
+  <div style="display:flex; gap:10px; justify-content:center">
+    <a class="btn" href="/signup">Get Started</a>
+    <a class="btn secondary" href="/login">I already have an account</a>
+  </div>
+</section>
+<section class="container section">
+  <h2 class="section-title">Services</h2>
+  <div class="card-grid">
+    <div class="card"><div class="icon">🖼️</div><h3>AI Image Generator</h3><p>Use multiple models to create stunning images.</p><div class="actions"><a class="btn" href="/services/image-generator">Open</a></div></div>
+    <div class="card"><div class="icon">🎙️</div><h3>Voice to Text</h3><p>Transcribe audio using Whisper via Hugging Face.</p><div class="actions"><a class="btn" href="/services/voice-to-text">Open</a></div></div>
+    <div class="card"><div class="icon">💬</div><h3>AI Chatbot</h3><p>Conversational AI for Q&A and brainstorming.</p><div class="actions"><a class="btn" href="/services/chatbot">Open</a></div></div>
+    <div class="card"><div class="icon">📝</div><h3>Text Summarizer</h3><p>Condense long text into key points.</p><div class="actions"><a class="btn" href="/services/summarizer">Open</a></div></div>
+  </div>
+</section>
+<section class="container section">
+  <h2 class="section-title">How it works</h2>
+  <ol class="list">
+    <li>Sign up and log in</li>
+    <li>Pick a service</li>
+    <li>Generate content and save to your history</li>
+    <li>View and manage results in your dashboard</li>
+  </ol>
+</section>
+<footer class="footer">© <span id="year"></span> AI Tools Platform</footer>
+<script>document.getElementById('year').textContent=new Date().getFullYear()</script>
+</body></html>
