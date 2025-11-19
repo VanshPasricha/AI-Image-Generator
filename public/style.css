@@ -114,6 +114,35 @@ body.dark-theme .container{
     box-shadow: 0 4px 6px -1px rgba(0,0, 0,0.1);
 }
 
+.header .auth-info{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 15px;
+}
+
+.header .auth-info #user-display{
+    color: var(--color-text);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.header .auth-info .btn.secondary{
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    background: var(--color-input);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header .auth-info .btn.secondary:hover{
+    background: var(--color-hover);
+    border-color: var(--color-primary);
+}
+
 .main-content{
     margin: 35px 0 5px;
 }

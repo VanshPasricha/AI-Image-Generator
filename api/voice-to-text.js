@@ -2,42 +2,64 @@ import { verifyAuth } from './_lib/verifyAuth.js';
 import { rateLimit } from './_lib/rate-limit.js';
 import { saveHistoryItem } from './_lib/saveHistory.js';
 import { uploadBuffer } from './_lib/storage.js';
+import { 
+  asyncHandler, 
+  validateMethod, 
+  ValidationError, 
+  ExternalServiceError,
+  validators 
+} from './_lib/error-handler.js';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
+export default asyncHandler(async function handler(req, res) {
+  validateMethod(['POST'])(req, res);
 
   const user = await verifyAuth(req, res);
-  if (!user) return; // response already sent
+  if (!user) return;
 
   const { limited } = rateLimit({ key: `stt:${user.uid}` });
-  if (limited) return res.status(429).json({ error: 'Too Many Requests' });
+  if (limited) throw new ValidationError('Rate limit exceeded. Please try again later.');
+
+  const { audioBase64, contentType, model: modelIn } = req.body || {};
+  
+  // Validate inputs
+  validators.required(audioBase64, 'audioBase64');
+  validators.required(contentType, 'contentType');
+  validators.string(audioBase64, 'audioBase64', 5000000); // 5MB limit
+  validators.string(contentType, 'contentType', 50);
+  
+  const model = modelIn || 'openai/whisper-large-v3';
+  validators.string(model, 'model', 100);
 
   try {
-    const { audioBase64, contentType, model: modelIn } = req.body || {};
-    if (!audioBase64 || !contentType) {
-      return res.status(400).json({ error: 'Missing fields: audioBase64, contentType' });
-    }
-
-    const model = modelIn || 'openai/whisper-large-v3';
     const url = `https://router.huggingface.co/hf-inference/models/${encodeURIComponent(model)}`;
 
     const hfResponse = await fetch(url, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${process.env.HF_API_KEY}`, 'Content-Type': contentType },
+      headers: { 
+        Authorization: `Bearer ${process.env.HF_API_KEY}`, 
+        'Content-Type': contentType,
+        'User-Agent': 'AI-Tools-Platform/1.0'
+      },
       body: Buffer.from(audioBase64, 'base64'),
     });
 
     if (!hfResponse.ok) {
-      let msg = await hfResponse.text();
-      try { msg = JSON.parse(msg).error || msg; } catch {}
-      return res.status(hfResponse.status).json({ error: msg });
+      let errMsg = 'Voice transcription service unavailable';
+      try {
+        const errJson = await hfResponse.json();
+        errMsg = errJson?.error || errMsg;
+      } catch {
+        errMsg = hfResponse.statusText || errMsg;
+      }
+      throw new ExternalServiceError('HuggingFace', errMsg);
     }
 
     const result = await hfResponse.json();
     const text = result.text || result?.[0]?.text || JSON.stringify(result);
+    
+    if (!text || typeof text !== 'string') {
+      throw new ValidationError('Transcription failed to return valid text');
+    }
 
     // Upload audio to storage (optional)
     let audioUrl = null;
@@ -47,8 +69,7 @@ export default async function handler(req, res) {
       const path = `users/${user.uid}/voice/${Date.now()}.${ext}`;
       audioUrl = await uploadBuffer({ buffer, contentType, path });
     } catch (e) {
-      // best-effort
-      console.warn('Audio upload failed', e);
+      console.warn('Audio upload failed (non-critical):', e.message);
     }
 
     // Save history
@@ -57,14 +78,23 @@ export default async function handler(req, res) {
         userId: user.uid,
         serviceType: 'voice',
         input: audioUrl || '(inline-audio)',
-        output: text,
+        output: validators.sanitize(text),
         metadata: { model, contentType },
       });
-    } catch {}
+    } catch (e) {
+      console.warn('History save failed (non-critical):', e.message);
+    }
 
-    return res.status(200).json({ text, audioUrl });
-  } catch (e) {
-    console.error('voice-to-text error', e);
-    return res.status(500).json({ error: 'Transcription failed' });
+    return res.status(200).json({ 
+      text: validators.sanitize(text), 
+      audioUrl 
+    });
+    
+  } catch (error) {
+    if (error instanceof ExternalServiceError || error instanceof ValidationError) {
+      throw error;
+    }
+    console.error('Voice-to-text error:', error);
+    throw new ValidationError('Transcription failed. Please try again.');
   }
-}
+});

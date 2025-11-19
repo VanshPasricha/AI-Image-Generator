@@ -1,40 +1,49 @@
 import { verifyAuth } from './_lib/verifyAuth.js';
-import { rateLimit } from './_lib/rate-limit.js';
-import { saveHistoryItem } from './_lib/saveHistory.js';
-import { uploadBuffer } from './_lib/storage.js';
+import { asyncHandler, validateMethod, ValidationError, ExternalServiceError, validators } from './_lib/error-handler.js';
+import { validateImageGeneration } from './_lib/input-validator.js';
+import { rateLimiter } from './_lib/enhanced-rate-limit.js';
+import { uploadBuffer } from './_lib/firebase-admin.js';
+import { HistoryManager } from './_lib/user-manager.js';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
+export default asyncHandler(async function handler(req, res) {
+  validateMethod(['POST'])(req, res);
 
   const user = await verifyAuth(req, res);
   if (!user) return;
 
-  const { limited } = rateLimit({ key: `img:${user.uid}` });
-  if (limited) return res.status(429).json({ error: 'Too Many Requests' });
+  // Apply enhanced rate limiting
+  await new Promise((resolve, reject) => {
+    rateLimiter.image(() => `img:${user.uid}`)(req, res, (error) => {
+      if (error) {
+        return reject(new ValidationError(error.message || 'Rate limit exceeded'));
+      }
+      resolve();
+    });
+  });
 
-  const { model, inputs, parameters, options } = req.body || {};
-  if (!model || !inputs) {
-    return res.status(400).json({ error: 'Missing required fields: model and inputs' });
-  }
-
-  const apiKey = process.env.HF_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'Server misconfiguration: HF_API_KEY is not set' });
+  const startTime = Date.now();
+  let publicUrl = null;
 
   try {
-    const url = `https://router.huggingface.co/hf-inference/models/${encodeURIComponent(model)}`;
-    const hfResponse = await fetch(url, {
+    // Validate and sanitize input
+    const { prompt, ...params } = req.body || {};
+    const sanitizedInput = validateImageGeneration({ prompt, ...params });
+    const sanitizedPrompt = sanitizedInput.prompt;
+    const sanitizedParams = sanitizedInput.parameters;
+
+    // Call Hugging Face API
+    const hfResponse = await fetch('https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ inputs, parameters, options: { wait_for_model: true, user_cache: false, ...(options || {}) } }),
+      headers: {
+        'Authorization': `Bearer ${process.env.HF_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ inputs: sanitizedPrompt, parameters: sanitizedParams }),
     });
 
     if (!hfResponse.ok) {
-      let errMsg = 'Upstream error';
-      try { const errJson = await hfResponse.json(); errMsg = errJson?.error || errMsg; } catch {}
-      return res.status(hfResponse.status).json({ error: errMsg });
+      const errorText = await hfResponse.text();
+      throw new ExternalServiceError('Image generation service unavailable', hfResponse.status);
     }
 
     const contentType = hfResponse.headers.get('content-type') || 'image/png';
@@ -47,27 +56,38 @@ export default async function handler(req, res) {
       const ext = contentType.includes('jpeg') ? 'jpg' : contentType.split('/')[1] || 'png';
       const path = `users/${user.uid}/images/${Date.now()}.${ext}`;
       imageUrl = await uploadBuffer({ buffer, contentType, path });
+      publicUrl = imageUrl;
     } catch (e) {
-      console.warn('Image upload failed', e);
+      console.warn('Image upload failed (non-critical):', e.message);
     }
 
-    try {
-      await saveHistoryItem({
-        userId: user.uid,
-        serviceType: 'image',
-        input: inputs,
-        output: imageUrl || '(inline-image)',
-        metadata: { model, parameters },
-      });
-    } catch (e) {
-      console.warn('History save failed', e);
-    }
+    // Save to history with enhanced metadata
+    await HistoryManager.saveHistoryItem({
+      userId: user.uid,
+      serviceType: 'image',
+      input: sanitizedPrompt,
+      output: publicUrl,
+      metadata: {
+        model: 'black-forest-labs/FLUX.1-dev',
+        parameters: sanitizedParams,
+        processingTime: Date.now() - startTime,
+        cost: '0.001', // Approximate cost
+        userAgent: req.headers['user-agent'],
+        ipAddress: req.ip || req.connection.remoteAddress
+      }
+    });
 
     res.setHeader('Content-Type', contentType);
-    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     return res.status(200).send(buffer);
+    
   } catch (error) {
-    console.error('generate-image error:', error);
-    return res.status(500).json({ error: 'Failed to generate image' });
+    if (error instanceof ExternalServiceError) {
+      throw error;
+    }
+    console.error('Image generation error:', error);
+    throw new ValidationError('Failed to generate image');
   }
-}
+});

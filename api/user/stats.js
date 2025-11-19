@@ -1,8 +1,8 @@
 import { verifyAuth } from '../_lib/verifyAuth.js';
 import { asyncHandler, validateMethod, ValidationError } from '../_lib/error-handler.js';
-import { UserProfileManager, HistoryManager } from '../_lib/user-manager.js';
+import { UserProfileManager } from '../_lib/user-manager.js';
 
-// Get user profile
+// Get user statistics
 export default asyncHandler(async function handler(req, res) {
   validateMethod(['GET'])(req, res);
 
@@ -10,13 +10,13 @@ export default asyncHandler(async function handler(req, res) {
   if (!user) return;
 
   try {
-    const profile = await UserProfileManager.getOrCreateProfile(user.uid);
-    return res.status(200).json(profile);
+    const stats = await UserProfileManager.getUserStats(user.uid);
+    return res.status(200).json(stats);
   } catch (error) {
     if (error instanceof ValidationError) {
       throw error;
     }
-    console.error('Get profile error:', error);
-    throw new ValidationError('Failed to get profile');
+    console.error('Get user stats error:', error);
+    throw new ValidationError('Failed to get user statistics');
   }
 });
