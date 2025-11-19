@@ -1,26 +1,35 @@
 // Environment variable validation utility
-export function validateEnvironment() {
+export function validateEnv() {
   const required = [
     'HF_API_KEY',
     'FIREBASE_PROJECT_ID',
     'FIREBASE_CLIENT_EMAIL',
     'FIREBASE_PRIVATE_KEY',
-    'FIREBASE_STORAGE_BUCKET'
+    'FIREBASE_STORAGE_BUCKET',
+    'NEXT_PUBLIC_FIREBASE_API_KEY',
+    'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
+    'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
+    'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
+    'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
+    'NEXT_PUBLIC_FIREBASE_APP_ID'
   ];
   
   const missing = required.filter(key => !process.env[key]);
   
   if (missing.length > 0) {
-    console.error('❌ Missing required environment variables:', missing);
-    console.error('Please set these environment variables and restart the server.');
-    
-    // In development, provide more helpful error message
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('\n💡 Development setup:');
-      console.error('1. Copy .env.example to .env');
-      console.error('2. Fill in the missing values in .env');
-      console.error('3. Restart the development server');
+    console.error('Missing required environment variables:', missing.join(', '));
+    if (typeof window === 'undefined') {
+      // Server-side - throw error to crash the process
+      throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
     }
+  }
+  
+  // In development, provide more helpful error message
+  if (process.env.NODE_ENV !== 'production') {
+    console.error('\n💡 Development setup:');
+    console.error('1. Copy .env.example to .env');
+    console.error('2. Fill in the missing values in .env');
+    console.error('3. Restart the development server');
     
     return false;
   }

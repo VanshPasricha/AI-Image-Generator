@@ -1,11 +1,10 @@
-// Fill these with your Firebase project config (client-side, safe to expose)
-// Get them from Firebase Console > Project Settings > General > Your apps
+// Firebase configuration loaded from environment variables
 window.FIREBASE_CONFIG = {
- apiKey: "AIzaSyCaDFtwbuJeb1_JBMjA6nvPyfvxVQkLcqA",
-  authDomain: "ai-services-e5716.firebaseapp.com",
-  projectId: "ai-services-e5716",
-  storageBucket: "ai-services-e5716.firebasestorage.app",
-  messagingSenderId: "436128978712",
-  appId: "1:436128978712:web:ec469f173281b73bc6706d",
-  measurementId: "G-KM7P5B7PDC"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || ""
 };
