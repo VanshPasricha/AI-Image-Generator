@@ -1,201 +1,249 @@
-# AI Image Generator 🪄✨
+# 🎨 AI Image Generator
 
-A sleek, responsive web application that allows you to generate AI images directly in your browser using various models from the Hugging Face Inference API. Describe your imagination and watch it come to life!
+A modern, professional web application that transforms text prompts into stunning AI-generated images using state-of-the-art models like FLUX.1 and Stable Diffusion.
 
-
-
-
----
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)](https://ai-image-generator-omega-rouge.vercel.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## ✨ Features
 
--   **Multi-Model Support**: Generate images using different AI models, including `FLUX`, `Stable Diffusion XL`, `Stable Diffusion v1.5`, and `Openjourney`.
--   **Customizable Generation**: Control the output by selecting the number of images (1-4) and the aspect ratio (Square, Landscape, Portrait).
--   **"Surprise Me" Prompts**: Not sure what to create? Use the dice button 🎲 to get a random creative prompt.
--   **Light & Dark Mode**: A beautiful theme toggle that respects your system preference and saves your choice in local storage. 🌓
--   **Fully Responsive**: A clean, modern UI that works perfectly on desktops, tablets, and mobile devices.
--   **Real-time Status**: See the status of each image generation in real-time with loading spinners and clear error messages.
--   **Download Images**: Easily save your favorite creations with a one-click download button.
--   **Vanilla JS**: Built with pure HTML, CSS, and JavaScript, with no external frameworks needed (besides Font Awesome for icons).
+- 🤖 **Multiple AI Models** - Choose from FLUX.1-dev, FLUX.1-schnell, and Stable Diffusion XL
+- 🎯 **Custom Aspect Ratios** - Square, Landscape, Portrait, and more
+- ⚡ **Fast Generation** - Get results in under 10 seconds
+- 🔐 **User Authentication** - Secure login with Firebase
+- 👤 **Profile Management** - Customize your account settings
+- 📱 **Responsive Design** - Works perfectly on all devices
+- 🎨 **Professional UI** - Beautiful SaaS-style interface with smooth animations
 
----
+## 🚀 Live Demo
 
-## 🛠️ Technologies Used
+Visit the live application: [https://ai-image-generator-omega-rouge.vercel.app](https://ai-image-generator-omega-rouge.vercel.app)
 
--   **HTML5**
--   **CSS3** (with CSS Variables for theming)
--   **Vanilla JavaScript**
--   **[Hugging Face Inference API](https://huggingface.co/inference-api)**
--   **[Font Awesome](https://fontawesome.com/)** for icons
+## 🛠️ Tech Stack
 
----
+### Frontend
+- **HTML5** - Semantic markup
+- **CSS3** - Modern styling with gradients and animations
+- **JavaScript (ES6+)** - Vanilla JS for interactivity
+- **AOS** - Animate On Scroll library
 
-## ⚙️ Getting Started
+### Backend
+- **Node.js** - Runtime environment
+- **Vercel Serverless Functions** - API endpoints
+- **Firebase Authentication** - User management
+- **Firebase Firestore** - NoSQL database
 
-To get a local copy up and running, follow these simple steps.
+### AI & APIs
+- **Hugging Face Inference API** - AI model hosting
+- **FLUX.1** - Advanced image generation models
+- **Stable Diffusion** - Industry-standard diffusion models
+
+### DevOps
+- **Vercel** - Deployment and hosting
+- **Git & GitHub** - Version control
+- **Environment Variables** - Secure configuration
+
+## 📦 Installation
 
 ### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+- Firebase account
+- Hugging Face API key
 
-You will need a **Hugging Face API Key** to use the image generation features.
+### Local Setup
 
-1.  Create a free account on [Hugging Face](https://huggingface.co/join).
-2.  Go to your profile settings and navigate to the **Access Tokens** section.
-3.  Create a new token with `read` permissions.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/VanshPasricha/AI-Image-Generator.git
+   cd AI-Image-Generator
+   ```
 
-### Installation
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-1.  **Clone the repository:**
-    ```sh
-    git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
-    ```
-2.  **Navigate to the project directory:**
-    ```sh
-    cd your-repository-name
-    ```
-3.  **For Local Development (Optional):**
-    ```bash
-    npm i -g vercel
-    vercel dev
-    ```
-    Then open http://localhost:3000
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` and add your credentials:
+   ```env
+   HF_API_KEY=your_huggingface_api_key
+   FIREBASE_PROJECT_ID=your_project_id
+   FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+   FIREBASE_CLIENT_EMAIL=your_service_account_email
+   # ... other Firebase credentials
+   ```
 
-4.  **For Production Deployment:**
-    This project is now configured for secure deployment on Vercel with API key protection.
+4. **Update Firebase config**
+   
+   Edit `public/js/firebase-config.js` with your Firebase project details.
 
----
+5. **Run development server**
+   ```bash
+   npx vercel dev --listen 3000
+   ```
 
-## 📖 How to Use
+6. **Open your browser**
+   
+   Navigate to `http://localhost:3000/landing`
 
-1.  **Describe your image**: Type a detailed description of the image you want to create in the text area.
-2.  **Get Inspired**: Click the dice button (🎲) if you need a random prompt idea.
-3.  **Select Options**:
-    -   Choose an AI model from the first dropdown.
-    -   Select the number of images to generate.
-    -   Choose the desired aspect ratio.
-4.  **Generate**: Click the **Generate** button and wait for the magic to happen!
-5.  **Download**: Once an image is generated, hover over it and click the download icon (📥) to save it.
+## 🎯 Usage
 
----
+### Generating Images
 
-## 🚀 Vercel Deployment
+1. **Navigate to the Generator**
+   - Click "Generate" in the navigation bar
+   - Or visit `/services/image-generator`
 
-This project is now configured for secure deployment on Vercel with proper API key protection.
+2. **Enter Your Prompt**
+   - Describe the image you want to create
+   - Example: "A serene mountain landscape at sunset with vibrant colors"
 
-### Project Structure
-- `public/index.html`, `public/style.css`, `public/hand.js` – Frontend files
-- `api/generate.js` – Serverless function that securely calls Hugging Face API
-- `vercel.json` – Deployment configuration
+3. **Select Options**
+   - Choose AI model (FLUX.1-dev for quality, FLUX.1-schnell for speed)
+   - Select aspect ratio (1:1, 16:9, 9:16, etc.)
+   - Choose number of images (1-4)
+
+4. **Generate & Download**
+   - Click "Generate" button
+   - Wait for processing (5-30 seconds)
+   - Download your images
+
+## 📁 Project Structure
+
+```
+AI-Image-Generator/
+├── api/                          # Serverless API functions
+│   ├── generate.js              # Image generation endpoint
+│   ├── auth/                    # Authentication endpoints
+│   │   └── session.js
+│   ├── user/                    # User management
+│   │   ├── profile.js
+│   │   └── update-profile.js
+│   └── _lib/                    # Shared utilities
+│       ├── firebase-admin.js
+│       ├── verifyAuth.js
+│       └── error-handler.js
+├── public/                       # Frontend files
+│   ├── landing.html             # Landing page
+│   ├── dashboard.html           # User dashboard
+│   ├── profile.html             # Profile management
+│   ├── index.html               # Image generator UI
+│   ├── hand.js                  # Generator logic
+│   ├── css/                     # Stylesheets
+│   │   ├── main.css
+│   │   └── components.css
+│   ├── js/                      # JavaScript modules
+│   │   ├── firebase-config.js
+│   │   ├── auth.js
+│   │   └── api.js
+│   └── services/
+│       └── image-generator.html # Generator page
+├── .env.example                 # Environment template
+├── .gitignore                   # Git ignore rules
+├── package.json                 # Dependencies
+├── vercel.json                  # Vercel configuration
+└── README.md                    # This file
+```
+
+## 🔐 Environment Variables
+
+Required environment variables (see `.env.example`):
+
+| Variable | Description |
+|----------|-------------|
+| `HF_API_KEY` | Hugging Face API key |
+| `FIREBASE_PROJECT_ID` | Firebase project ID |
+| `FIREBASE_PRIVATE_KEY` | Firebase service account private key |
+| `FIREBASE_CLIENT_EMAIL` | Firebase service account email |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase web API key (public) |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase auth domain |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase project ID (public) |
+
+## 🚢 Deployment
 
 ### Deploy to Vercel
-1. Import this repository on [Vercel](https://vercel.com/new)
-2. Add environment variable:
-   - **Key**: `HF_API_KEY`
-   - **Value**: Your Hugging Face API key (starts with `hf_...`)
-   - **Location**: Project → Settings → Environment Variables
-3. Deploy!
 
-### Security Features
-- ✅ API key is stored securely as an environment variable
-- ✅ Frontend calls `/api/generate` (serverless function) instead of directly calling Hugging Face
-- ✅ No sensitive data exposed in browser
-- ✅ Same-origin requests prevent CORS issues
+1. **Push to GitHub**
+   ```bash
+   git add .
+   git commit -m "Ready for deployment"
+   git push origin main
+   ```
 
-### How It Works
-1. Frontend sends POST to `/api/generate` with `{ model, inputs, parameters, options }`
-2. Serverless function forwards request to Hugging Face with secure API key
-3. Image blob is returned to the client for display/download
+2. **Import to Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Click "New Project"
+   - Import your GitHub repository
 
-## License
+3. **Configure Environment Variables**
+   - Add all variables from `.env`
+   - Make sure to format `FIREBASE_PRIVATE_KEY` correctly
 
-Distributed under the MIT License. See `LICENSE` for more information.
+4. **Deploy**
+   - Click "Deploy"
+   - Wait for build to complete
+   - Your app is live! 🎉
+
+## 🎨 Features in Detail
+
+### AI Models
+
+- **FLUX.1-dev**: High-quality, detailed images with superior prompt understanding
+- **FLUX.1-schnell**: Fast generation with good quality, ideal for quick iterations
+- **Stable Diffusion XL**: Versatile, widely-used model with consistent results
+
+### User Features
+
+- **Authentication**: Secure email/password login with Firebase
+- **Profile Management**: Update display name and email
+- **Responsive Design**: Works on desktop, tablet, and mobile
+- **Dark Theme**: Professional dark mode interface
+
+### Technical Features
+
+- **Serverless Architecture**: Auto-scaling, cost-effective
+- **Real-time Updates**: Instant UI feedback
+- **Error Handling**: Graceful error messages
+- **Security**: Environment variables, input validation
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Vansh Pasricha**
+
+- GitHub: [@VanshPasricha](https://github.com/VanshPasricha)
+- Project Link: [https://github.com/VanshPasricha/AI-Image-Generator](https://github.com/VanshPasricha/AI-Image-Generator)
+
+## 🙏 Acknowledgments
+
+- [Hugging Face](https://huggingface.co) for AI model hosting
+- [Vercel](https://vercel.com) for seamless deployment
+- [Firebase](https://firebase.google.com) for authentication and database
+- [Black Forest Labs](https://blackforestlabs.ai) for FLUX models
+- [Stability AI](https://stability.ai) for Stable Diffusion
+
+## 📞 Support
+
+If you have any questions or run into issues, please open an issue on GitHub.
 
 ---
 
-# Multi‑Service AI Tools Platform (Upgrade)
-
-This repository now includes a full multi‑service AI platform built around the existing image generator (kept intact). The original generator lives at `/index` and is embedded unchanged in the new service page.
-
-## What’s Included
-- Landing page (`/`)
-- Auth (Email/Password via Firebase Auth)
-- Dashboard (`/dashboard`)
-- Services:
-  - Image Generator (existing) → `/services/image-generator` (embeds `/index`)
-  - Voice to Text (Whisper via HF) → `/services/voice-to-text`
-  - AI Chatbot (Zephyr via HF) → `/services/chatbot`
-  - Text Summarizer (BART via HF) → `/services/summarizer`
-- History (`/history`) with download/delete
-- Profile (`/profile`)
-
-## Tech Choices
-- Frontend: HTML/CSS/JS (no frameworks)
-- Backend: Vercel Serverless Functions (Node.js) exposing the required endpoints
-- Auth/DB/Storage: Firebase (Auth + Firestore via Admin SDK; optional Storage for images/audio)
-- AI: Hugging Face Inference API
-
-## Environment Variables
-Create `.env` locally and on Vercel Project → Settings → Environment Variables. See `.env.example`.
-
-Required:
-- `HF_API_KEY` – Hugging Face token (read)
-- `FIREBASE_PROJECT_ID`
-- `FIREBASE_CLIENT_EMAIL`
-- `FIREBASE_PRIVATE_KEY` – string with `\n` escaped as `\\n`
-
-Optional:
-- `FIREBASE_STORAGE_BUCKET` – e.g. `your-project-id.appspot.com`
-
-## Firebase Setup
-1) Create a Firebase project.
-2) Enable Authentication → Email/Password.
-3) Create a Service Account (Project Settings → Service Accounts → Generate new private key). Use fields for env vars above.
-4) (Optional) Set up Cloud Storage bucket if you want images/audio stored publicly.
-5) Firestore: no client rules needed (server writes via Admin). Create Database in Native mode.
-
-## Client Firebase Config
-Update `public/js/firebase-config.js` with your Web App config (safe to expose). This powers client‑side auth only.
-
-## Routes and Endpoints
-Frontend pages:
-- `/` → landing
-- `/login`, `/signup`
-- `/dashboard`
-- `/services/image-generator` (embeds existing `/index`)
-- `/services/voice-to-text`
-- `/services/chatbot`
-- `/services/summarizer`
-- `/history`, `/profile`
-
-Serverless API:
-- `POST /api/generate-image` – proxy to HF image models, saves history, optional upload to Storage
-- `POST /api/voice-to-text` – body: `{ audioBase64, contentType, model? }` (default whisper)
-- `POST /api/chat` – body: `{ messages:[{role,content}], model?, temperature?, max_new_tokens? }`
-- `POST /api/summarize` – body: `{ text, max_length?, model? }`
-- `GET /api/user/history?limit=50&serviceType=image|voice|chat|summarize`
-- `DELETE /api/user/history/:id`
-- `GET /api/user/profile` / `PATCH /api/user/profile`
-- `POST /api/auth/session` (internal) – exchanges Firebase ID token for session cookie
-- `POST /api/auth/logout` – clears cookie
-
-Auth: All service/user routes require login via Firebase Auth. After login/signup, the client calls `/api/auth/session` to set a secure session cookie used by API routes. The legacy generator still calls `/api/generate`; Vercel rewrites route this to `/api/generate-image` to record history without changing original code.
-
-## Deployment (Vercel)
-Already configured via `vercel.json`:
-- `"/" → /public/landing.html`
-- `/api/generate → /api/generate-image` (keeps existing generator intact)
-- Static files from `/public/*`
-
-Steps:
-1) Add env vars in Vercel
-2) Deploy (or run locally):
-   ```bash
-   npm i -g vercel
-   vercel dev
-   ```
-3) Open http://localhost:3000
-
-## Notes
-- Existing generator code under `/public/index.html`, `/public/hand.js`, `/public/style.css` is unchanged.
-- History documents (Firestore): `{ userId, serviceType, input, output, timestamp, metadata }`
-- Session cookies secure your API keys—never exposed client‑side.
-
+**Made with ❤️ by Vansh Pasricha**
