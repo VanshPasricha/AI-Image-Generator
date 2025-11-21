@@ -7,14 +7,22 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Session API called');
     const { idToken } = req.body || {};
-    if (!idToken) return res.status(400).json({ error: 'Missing idToken' });
+    if (!idToken) {
+      console.error('Missing idToken');
+      return res.status(400).json({ error: 'Missing idToken' });
+    }
 
+    console.log('Verifying ID token...');
     const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
     const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
+    console.log('Session cookie created');
 
     // Ensure user profile doc
     const decoded = await auth.verifyIdToken(idToken);
+    console.log('ID token verified for user:', decoded.uid);
+
     const ref = db.collection('users').doc(decoded.uid);
     await ref.set({
       uid: decoded.uid,
@@ -22,6 +30,7 @@ export default async function handler(req, res) {
       name: decoded.name || decoded.displayName || '',
       createdAt: new Date().toISOString(),
     }, { merge: true });
+    console.log('User profile saved to Firestore');
 
     const proto = (req.headers['x-forwarded-proto'] || '').toString();
     const secure = proto === 'https' || process.env.NODE_ENV === 'production';
@@ -29,6 +38,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true });
   } catch (e) {
     console.error('session cookie error', e);
-    return res.status(401).json({ error: 'Failed to create session' });
+    return res.status(401).json({ error: 'Failed to create session', details: e.message });
   }
 }

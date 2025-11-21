@@ -92,7 +92,7 @@ export function asyncHandler(fn) {
       if (error instanceof ApiError) {
         return handleApiError(error, res);
       }
-      
+
       // Handle unexpected errors
       console.error('Unexpected error in async handler:', error);
       return handleApiError(
@@ -105,11 +105,10 @@ export function asyncHandler(fn) {
 
 // Method validation helper
 export function validateMethod(allowedMethods) {
-  return (req, res, next) => {
+  return (req, res) => {
     if (!allowedMethods.includes(req.method)) {
       throw new ApiError(`Method ${req.method} not allowed`, 405, 'METHOD_NOT_ALLOWED');
     }
-    next();
   };
 }
 
@@ -121,7 +120,7 @@ export const validators = {
     }
     return value;
   },
-  
+
   string: (value, fieldName = 'field', maxLength = 1000) => {
     if (typeof value !== 'string') {
       throw new ValidationError(`${fieldName} must be a string`, fieldName);
@@ -131,7 +130,7 @@ export const validators = {
     }
     return value.trim();
   },
-  
+
   array: (value, fieldName = 'field', maxItems = 10) => {
     if (!Array.isArray(value)) {
       throw new ValidationError(`${fieldName} must be an array`, fieldName);
@@ -141,7 +140,7 @@ export const validators = {
     }
     return value;
   },
-  
+
   number: (value, fieldName = 'field', min = 0, max = Infinity) => {
     const num = Number(value);
     if (isNaN(num)) {
@@ -152,7 +151,7 @@ export const validators = {
     }
     return num;
   },
-  
+
   email: (value, fieldName = 'email') => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
@@ -160,7 +159,7 @@ export const validators = {
     }
     return value.toLowerCase();
   },
-  
+
   sanitize: (str) => {
     if (typeof str !== 'string') return str;
     // Basic sanitization - remove potentially harmful characters

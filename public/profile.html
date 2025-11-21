@@ -1,50 +1,208 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Profile</title>
-<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/components.css">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="/js/firebase-config.js"></script>
-</head><body>
-<nav class="navbar">
-  <div class="left">
-    <div class="brand"><div class="logo">AI</div><span>AI Tools</span></div>
-    <div class="links">
-      <a href="/dashboard">Dashboard</a>
-      <a href="/services/image-generator">Image</a>
-      <a href="/services/voice-to-text">Voice</a>
-      <a href="/services/chatbot">Chat</a>
-      <a href="/services/summarizer">Summarizer</a>
-      <a href="/history">History</a>
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Profile - AI Image Generator</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0b1020 0%, #1a1f3a 100%);
+      min-height: 100vh;
+    }
+
+    .profile-container {
+      max-width: 600px;
+      margin: 80px auto;
+      padding: 40px;
+    }
+
+    .profile-card {
+      background: rgba(15, 24, 56, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .profile-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 8px;
+    }
+
+    .profile-header p {
+      color: #9a9fb8;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #b3b9d6;
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(10, 15, 30, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #6a5acd;
+    }
+
+    .form-group input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #6a5acd 0%, #5a4fc7 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(106, 90, 205, 0.6);
+    }
+
+    .success-message {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="left">
+      <div class="brand">
+        <div class="logo">AI</div><span>AI Image Generator</span>
+      </div>
+      <div class="links">
+        <a href="/landing">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/services/image-generator">Generate</a>
+        <a href="/profile" data-active="profile">Profile</a>
+      </div>
+    </div>
+    <div class="user"><span id="nav-user"></span><button class="btn secondary" data-logout>Logout</button></div>
+  </nav>
+
+  <div class="profile-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <h1>Your Profile</h1>
+        <p>Manage your account information</p>
+      </div>
+
+      <div id="success-msg" class="success-message">
+        ✓ Profile updated successfully!
+      </div>
+
+      <form id="profile-form">
+        <div class="form-group">
+          <label for="name">Display Name</label>
+          <input type="text" id="name" placeholder="Enter your name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="your@email.com">
+        </div>
+
+        <button type="submit" class="btn-save">Save Changes</button>
+      </form>
     </div>
   </div>
-  <div class="user"><span id="nav-user"></span><button class="btn secondary" data-logout>Logout</button></div>
-</nav>
-<div class="container">
-  <h2>Profile</h2>
-  <form class="form" id="profile-form">
-    <div class="row"><label>Name</label><input id="name" required></div>
-    <div class="row"><label>Email</label><input id="email" disabled></div>
-    <button class="submit" type="submit">Save</button>
-  </form>
-</div>
-<div class="toast"></div>
-<script type="module">
-  import { ensureAuthed, mountNavbar } from '/js/auth.js';
-  import { apiGet, apiPost } from '/js/api.js';
-  import { toast } from '/js/ui.js';
-  await ensureAuthed();
-  mountNavbar('profile');
-  try{
-    const r = await apiGet('/api/user/profile');
-    document.getElementById('name').value = r.profile.name||'';
-    document.getElementById('email').value = r.profile.email||'';
-  }catch(e){ toast('Failed to load profile'); }
-  document.getElementById('profile-form').addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    try{ await apiPost('/api/user/profile',{ name: document.getElementById('name').value.trim() }); toast('Saved'); }
-    catch(e){ toast(e.message||'Failed to save'); }
-  });
-</script>
-</body></html>
+
+  <script type="module">
+    // Simple profile management without auth
+    let currentProfile = {
+      name: localStorage.getItem('profile_name') || 'Demo User',
+      email: localStorage.getItem('profile_email') || 'demo@aiimages.com'
+    };
+
+    // Load profile data
+    document.getElementById('name').value = currentProfile.name;
+    document.getElementById('email').value = currentProfile.email;
+
+    // Handle form submission
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const newName = document.getElementById('name').value.trim();
+      const newEmail = document.getElementById('email').value.trim();
+
+      if (newName && newEmail) {
+        // Save to localStorage
+        localStorage.setItem('profile_name', newName);
+        localStorage.setItem('profile_email', newEmail);
+        currentProfile.name = newName;
+        currentProfile.email = newEmail;
+
+        // Update navbar
+        const navUser = document.getElementById('nav-user');
+        if (navUser) navUser.textContent = newName;
+
+        // Show success message
+        const successMsg = document.getElementById('success-msg');
+        successMsg.style.display = 'block';
+
+        setTimeout(() => {
+          successMsg.style.display = 'none';
+        }, 3000);
+      }
+    });
+
+    // Update navbar with current name
+    const navUser = document.getElementById('nav-user');
+    if (navUser) navUser.textContent = currentProfile.name;
+
+    // Logout handler
+    const logoutBtn = document.querySelector('[data-logout]');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.clear();
+        window.location.href = '/landing';
+      });
+    }
+  </script>
+</body>
+
+</html>

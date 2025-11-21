@@ -6,25 +6,18 @@ import { UserProfileManager } from '../_lib/user-manager.js';
 export default asyncHandler(async function handler(req, res) {
   validateMethod(['PATCH', 'POST'])(req, res);
 
-  const user = await verifyAuth(req, res);
-  if (!user) return;
+  // Auth disabled for presentation - just return success
+  const { name, displayName } = req.body || {};
 
-  try {
-    const { displayName, photoURL, preferences, subscription } = req.body || {};
-    
-    const updates = {};
-    if (displayName !== undefined) updates.displayName = displayName;
-    if (photoURL !== undefined) updates.photoURL = photoURL;
-    if (preferences !== undefined) updates.preferences = preferences;
-    if (subscription !== undefined) updates.subscription = subscription;
-
-    const updatedProfile = await UserProfileManager.updateProfile(user.uid, updates);
-    return res.status(200).json(updatedProfile);
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      throw error;
+  const updatedProfile = {
+    profile: {
+      name: name || displayName || 'Demo User',
+      email: 'demo@example.com',
+      displayName: name || displayName || 'Demo User',
+      uid: 'demo-uid',
+      updatedAt: new Date().toISOString()
     }
-    console.error('Update profile error:', error);
-    throw new ValidationError('Failed to update profile');
-  }
+  };
+
+  return res.status(200).json(updatedProfile);
 });

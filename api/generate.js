@@ -1,21 +1,29 @@
+import { verifyAuth } from './_lib/verifyAuth.js';
+
 export default async function handler(req, res) {
+  // Only accept POST requests for image generation
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { model, inputs, parameters, options } = req.body || {};
-  if (!model || !inputs) {
-    return res.status(400).json({ error: 'Missing required fields: model and inputs' });
+  // Authentication is optional for demo purposes
+  // In production, you'd want to enforce authentication
+  let user = null;
+
+  // Extract parameters from request body
+  // Support both 'prompt' and 'inputs' field names for flexibility
+  const { model, inputs, prompt, parameters, options } = req.body || {};
+  const promptText = prompt || inputs;
+
+  // Validate required fields
+  if (!model || !promptText) {
+    return res.status(400).json({ error: 'Missing required fields: model and prompt/inputs' });
   }
 
+  // Get API key from environment variables (never hardcode!)
   const apiKey = process.env.HF_API_KEY;
-  console.log('Environment check:', {
-    hasApiKey: !!apiKey,
-    keyLength: apiKey ? apiKey.length : 0,
-    keyPrefix: apiKey ? apiKey.substring(0, 3) : 'none'
-  });
-  
+
   if (!apiKey) {
     return res.status(500).json({ error: 'Server misconfiguration: HF_API_KEY is not set' });
   }
@@ -30,7 +38,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        inputs,
+        inputs: promptText,
         parameters,
         options: { wait_for_model: true, user_cache: false, ...(options || {}) },
       }),
@@ -41,24 +49,18 @@ export default async function handler(req, res) {
       try {
         const errJson = await hfResponse.json();
         errMsg = errJson?.error || errMsg;
-        console.log('HF API Error:', {
-          status: hfResponse.status,
-          statusText: hfResponse.statusText,
-          error: errMsg
-        });
       } catch (e) {
-        console.log('HF API Error (no JSON):', {
-          status: hfResponse.status,
-          statusText: hfResponse.statusText
-        });
+        // Ignore JSON parse error
       }
       return res.status(hfResponse.status).json({ error: errMsg });
     }
 
-    // Proxy content back to the client as an image/blob
+    // Get image data
     const contentType = hfResponse.headers.get('content-type') || 'image/png';
     const arrayBuffer = await hfResponse.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    // Return image
     res.setHeader('Content-Type', contentType);
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).send(buffer);

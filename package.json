@@ -5,8 +5,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "vercel dev",
-    "start": "vercel dev"
+    "dev": "echo 'Starting Vercel Dev...'",
+    "start": "echo 'Starting Vercel Dev...'"
   },
   "dependencies": {
     "firebase": "^12.6.0",

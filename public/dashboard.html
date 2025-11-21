@@ -1,53 +1,294 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dashboard</title>
-<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/components.css">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="/js/firebase-config.js"></script>
-</head><body>
-<nav class="navbar">
-  <div class="left">
-    <div class="brand"><div class="logo">AI</div><span>AI Tools</span></div>
-    <div class="links">
-      <a href="/dashboard" data-active="dashboard">Dashboard</a>
-      <a href="/services/image-generator">Image</a>
-      <a href="/services/voice-to-text">Voice</a>
-      <a href="/services/chatbot">Chat</a>
-      <a href="/services/summarizer">Summarizer</a>
-      <a href="/history">History</a>
-      <a href="/profile">Profile</a>
-    </div>
-  </div>
-  <div class="user"><span id="nav-user"></span><button class="btn secondary" data-logout>Logout</button></div>
-</nav>
-<div class="container">
-  <h2>Welcome, <span id="user-name">User</span> 👋</h2>
-  <p style="color:#9aa3c6">Quick access to all services</p>
-  <div class="card-grid" style="margin:16px 0 28px">
-    <div class="card"><div class="icon">🖼️</div><h3>AI Image Generator</h3><p>Create images from prompts.</p><div class="actions"><a class="btn" href="/services/image-generator">Open</a></div></div>
-    <div class="card"><div class="icon">🎙️</div><h3>Voice to Text</h3><p>Transcribe your audio.</p><div class="actions"><a class="btn" href="/services/voice-to-text">Open</a></div></div>
-    <div class="card"><div class="icon">💬</div><h3>AI Chatbot</h3><p>Ask anything.</p><div class="actions"><a class="btn" href="/services/chatbot">Open</a></div></div>
-    <div class="card"><div class="icon">📝</div><h3>Summarizer</h3><p>Shorten long text.</p><div class="actions"><a class="btn" href="/services/summarizer">Open</a></div></div>
-  </div>
-  <h3>Recent Activity</h3>
-  <div id="recent" class="list"></div>
-</div>
-<div class="toast"></div>
-<script type="module">
-  import { ensureAuthed, mountNavbar } from '/js/auth.js';
-  import { apiGet } from '/js/api.js';
-  import { toast } from '/js/ui.js';
-  await ensureAuthed();
-  mountNavbar('dashboard');
-  try{
-    const r = await apiGet('/api/user/history?limit=5');
-    const list = document.getElementById('recent');
-    if(!r.items.length){ list.innerHTML = '<div class="alert">No recent activity yet.</div>'; }
-    else{
-      list.innerHTML = r.items.map(it=>`<div class='item'><div><b>${it.serviceType}</b></div><div class='meta'>${new Date(it.timestamp).toLocaleString()}</div><div>${it.input? (it.input.length>120? it.input.slice(0,120)+'…': it.input): ''}</div></div>`).join('');
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - AI Image Generator</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0b1020 0%, #1a1f3a 100%);
+      min-height: 100vh;
     }
-  }catch(e){ toast(e.message||'Failed to load history'); }
-</script>
-</body></html>
+
+    .dashboard-hero {
+      padding: 40px 24px;
+      text-align: center;
+      background: rgba(15, 24, 56, 0.5);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dashboard-hero h1 {
+      font-size: 36px;
+      font-weight: 800;
+      margin: 0 0 12px;
+      background: linear-gradient(135deg, #ffffff 0%, #a8a3ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .dashboard-hero p {
+      color: #b3b9d6;
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .dashboard-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .quick-action {
+      background: linear-gradient(135deg, rgba(106, 90, 205, 0.1) 0%, rgba(90, 79, 199, 0.1) 100%);
+      border: 1px solid rgba(106, 90, 205, 0.3);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .quick-action h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 16px;
+      color: white;
+    }
+
+    .quick-action p {
+      color: #b3b9d6;
+      margin: 0 0 24px;
+      font-size: 16px;
+    }
+
+    .quick-action .btn-primary {
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #6a5acd 0%, #5a4fc7 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(106, 90, 205, 0.4);
+    }
+
+    .quick-action .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(106, 90, 205, 0.6);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: rgba(15, 24, 56, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(106, 90, 205, 0.2) 0%, rgba(90, 79, 199, 0.2) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: white;
+      margin: 0 0 4px;
+    }
+
+    .stat-label {
+      color: #9a9fb8;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 20px;
+    }
+
+    .recent-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .recent-item {
+      background: rgba(15, 24, 56, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .recent-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(106, 90, 205, 0.2) 0%, rgba(90, 79, 199, 0.2) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .recent-content {
+      flex: 1;
+    }
+
+    .recent-title {
+      font-weight: 600;
+      color: white;
+      margin: 0 0 4px;
+    }
+
+    .recent-desc {
+      color: #9a9fb8;
+      font-size: 14px;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .recent-time {
+      color: #6a7090;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="left">
+      <div class="brand">
+        <div class="logo">AI</div><span>AI Image Generator</span>
+      </div>
+      <div class="links">
+        <a href="/landing" data-active="home">Home</a>
+        <a href="/dashboard" data-active="dashboard">Dashboard</a>
+        <a href="/services/image-generator">Generate</a>
+        <a href="/profile">Profile</a>
+      </div>
+    </div>
+    <div class="user"><span id="nav-user"></span><button class="btn secondary" data-logout>Logout</button></div>
+  </nav>
+
+  <div class="dashboard-hero">
+    <h1>Welcome back, <span id="user-name">User</span>! 👋</h1>
+    <p>Ready to create something amazing?</p>
+  </div>
+
+  <div class="dashboard-content">
+    <!-- Quick Action -->
+    <div class="quick-action">
+      <h2>Start Creating</h2>
+      <p>Transform your ideas into stunning AI-generated images</p>
+      <a href="/services/image-generator" class="btn-primary">Generate Images Now</a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🎨</div>
+        <div class="stat-value" id="stat-images">0</div>
+        <p class="stat-label">Images Generated</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-value" id="stat-remaining">20</div>
+        <p class="stat-label">Remaining This Month</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💾</div>
+        <div class="stat-value" id="stat-saved">0</div>
+        <p class="stat-label">Saved to Cloud</p>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <h2 class="section-title">Recent Creations</h2>
+    <div id="recent" class="recent-grid"></div>
+  </div>
+
+  <div class="toast"></div>
+
+  <script type="module">
+    import { ensureAuthed, mountNavbar } from '/js/auth.js';
+    import { apiGet } from '/js/api.js';
+    import { toast } from '/js/ui.js';
+
+    await ensureAuthed();
+    mountNavbar('dashboard');
+
+    // Load recent activity
+    try {
+      const r = await apiGet('/api/user/history?limit=5');
+      const list = document.getElementById('recent');
+
+      if (!r.items.length) {
+        list.innerHTML = '<div class="alert">No images generated yet. Start creating!</div>';
+      } else {
+        // Filter for image generation only
+        const imageItems = r.items.filter(it => it.serviceType === 'image');
+
+        if (!imageItems.length) {
+          list.innerHTML = '<div class="alert">No images generated yet. Start creating!</div>';
+        } else {
+          list.innerHTML = imageItems.map(it => `
+                        <div class="recent-item">
+                            <div class="recent-icon">🎨</div>
+                            <div class="recent-content">
+                                <div class="recent-title">Image Generation</div>
+                                <div class="recent-desc">${it.input ? (it.input.length > 80 ? it.input.slice(0, 80) + '…' : it.input) : 'Generated image'}</div>
+                            </div>
+                            <div class="recent-time">${new Date(it.timestamp).toLocaleDateString()}</div>
+                        </div>
+                    `).join('');
+
+          // Update stats
+          document.getElementById('stat-images').textContent = imageItems.length;
+          document.getElementById('stat-saved').textContent = imageItems.length;
+
+          // Calculate remaining (assuming 20 free per month)
+          const remaining = Math.max(0, 20 - imageItems.length);
+          document.getElementById('stat-remaining').textContent = remaining;
+        }
+      }
+    } catch (e) {
+      document.getElementById('recent').innerHTML = '<div class="alert">Unable to load recent activity</div>';
+    }
+  </script>
+</body>
+
+</html>

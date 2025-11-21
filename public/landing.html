@@ -1,45 +1,758 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI Tools Platform</title>
-<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/components.css">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-</head><body>
-<nav class="navbar">
-  <div class="left">
-    <div class="brand"><div class="logo">AI</div><span>AI Tools</span></div>
-    <div class="links">
-      <a href="/login">Login</a>
-      <a href="/signup">Sign Up</a>
-    </div>
-  </div>
-  <div class="user"></div>
-</nav>
-<section class="hero container">
-  <h1>All your favorite AI tools in one place</h1>
-  <p>Generate images, transcribe audio, chat with AI, and summarize text. Built on Hugging Face and Firebase, deployed on Vercel. No frameworks—just clean HTML/CSS/JS.</p>
-  <div style="display:flex; gap:10px; justify-content:center">
-    <a class="btn" href="/signup">Get Started</a>
-    <a class="btn secondary" href="/login">I already have an account</a>
-  </div>
-</section>
-<section class="container section">
-  <h2 class="section-title">Services</h2>
-  <div class="card-grid">
-    <div class="card"><div class="icon">🖼️</div><h3>AI Image Generator</h3><p>Use multiple models to create stunning images.</p><div class="actions"><a class="btn" href="/services/image-generator">Open</a></div></div>
-    <div class="card"><div class="icon">🎙️</div><h3>Voice to Text</h3><p>Transcribe audio using Whisper via Hugging Face.</p><div class="actions"><a class="btn" href="/services/voice-to-text">Open</a></div></div>
-    <div class="card"><div class="icon">💬</div><h3>AI Chatbot</h3><p>Conversational AI for Q&A and brainstorming.</p><div class="actions"><a class="btn" href="/services/chatbot">Open</a></div></div>
-    <div class="card"><div class="icon">📝</div><h3>Text Summarizer</h3><p>Condense long text into key points.</p><div class="actions"><a class="btn" href="/services/summarizer">Open</a></div></div>
-  </div>
-</section>
-<section class="container section">
-  <h2 class="section-title">How it works</h2>
-  <ol class="list">
-    <li>Sign up and log in</li>
-    <li>Pick a service</li>
-    <li>Generate content and save to your history</li>
-    <li>View and manage results in your dashboard</li>
-  </ol>
-</section>
-<footer class="footer">© <span id="year"></span> AI Tools Platform</footer>
-<script>document.getElementById('year').textContent=new Date().getFullYear()</script>
-</body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tools Platform - Transform Your Workflow with AI</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* Landing Page Specific Styles */
+        body {
+            background: linear-gradient(135deg, #0b1020 0%, #1a1f3a 100%);
+        }
+
+        .landing-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(14, 21, 48, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .landing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(100, 90, 205, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(100, 90, 205, 0.1);
+            border: 1px solid rgba(100, 90, 205, 0.3);
+            border-radius: 100px;
+            color: #a8a3ff;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0 0 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #a8a3ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: #b3b9d6;
+            line-height: 1.6;
+            margin: 0 0 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #6a5acd 0%, #5a4fc7 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(106, 90, 205, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(106, 90, 205, 0.6);
+        }
+
+        .btn-secondary {
+            padding: 16px 32px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 100px 24px;
+            background: rgba(15, 24, 56, 0.5);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            color: #a8a3ff;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 16px;
+            color: white;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: #b3b9d6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(15, 24, 56, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(106, 90, 205, 0.5);
+            box-shadow: 0 8px 32px rgba(106, 90, 205, 0.2);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(106, 90, 205, 0.2) 0%, rgba(90, 79, 199, 0.2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 12px;
+            color: white;
+        }
+
+        .feature-description {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #9a9fb8;
+            margin: 0;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 100px 24px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(15, 24, 56, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card.featured {
+            border-color: #6a5acd;
+            box-shadow: 0 8px 32px rgba(106, 90, 205, 0.3);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            right: 24px;
+            background: linear-gradient(135deg, #6a5acd 0%, #5a4fc7 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pricing-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #b3b9d6;
+            margin: 0 0 8px;
+        }
+
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 800;
+            color: white;
+            margin: 0 0 8px;
+        }
+
+        .pricing-period {
+            font-size: 14px;
+            color: #9a9fb8;
+            margin: 0 0 24px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 32px;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            color: #b3b9d6;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: #6a5acd;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            padding: 100px 24px;
+            background: rgba(15, 24, 56, 0.5);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background: rgba(15, 24, 56, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+        }
+
+        .testimonial-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #b3b9d6;
+            margin: 0 0 24px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6a5acd 0%, #5a4fc7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .testimonial-info h4 {
+            margin: 0 0 4px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .testimonial-info p {
+            margin: 0;
+            color: #9a9fb8;
+            font-size: 14px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 24px;
+            text-align: center;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, rgba(106, 90, 205, 0.1) 0%, rgba(90, 79, 199, 0.1) 100%);
+            border: 1px solid rgba(106, 90, 205, 0.3);
+            border-radius: 24px;
+            padding: 60px 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 40px;
+            font-weight: 800;
+            margin: 0 0 16px;
+            color: white;
+        }
+
+        .cta-subtitle {
+            font-size: 18px;
+            color: #b3b9d6;
+            margin: 0 0 32px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 60px 24px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 16px;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #9a9fb8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #6a5acd;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9a9fb8;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 40px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .features-grid,
+            .pricing-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="landing-nav">
+        <div class="landing-container"
+            style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div
+                    style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #6a5acd, #00d4ff); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                    AI</div>
+                <span style="font-weight: 700; font-size: 18px; color: white;">AI Tools Platform</span>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <a href="/login" class="btn-secondary" style="padding: 10px 20px; font-size: 14px;">Login</a>
+                <a href="/signup" class="btn-primary" style="padding: 10px 20px; font-size: 14px;">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+            <div class="hero-badge" data-aos="fade-down" data-aos-delay="200">
+                ✨ Powered by FLUX & Stable Diffusion
+            </div>
+            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="400">Create Stunning AI-Generated Images
+            </h1>
+            <p class="hero-subtitle">
+                Transform your ideas into beautiful, high-quality images using state-of-the-art AI models.
+                Perfect for designers, marketers, and creators.
+            </p>
+            <div class="hero-cta" data-aos="fade-up" data-aos-delay="800">
+                <a href="/signup" class="btn-primary">Start Creating Free</a>
+                <a href="#features" class="btn-secondary">See Examples</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="landing-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-tag">Features</div>
+                <h2 class="section-title">Powerful AI Image Generation</h2>
+                <p class="section-subtitle">Multiple models, unlimited creativity</p>
+            </div>
+
+            <div class="features-grid">
+                <a href="/signup" class="feature-card" data-aos="fade-up" data-aos-delay="100"
+                    style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Multiple AI Models</h3>
+                    <p class="feature-description">
+                        Choose from FLUX.1-dev, FLUX.1-schnell, Stable Diffusion XL, and more. Each optimized for
+                        different use cases.
+                    </p>
+                </a>
+
+                <a href="/signup" class="feature-card" data-aos="fade-up" data-aos-delay="200"
+                    style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">High Quality Output</h3>
+                    <p class="feature-description">
+                        Generate stunning, professional-grade images up to 1024x1024 resolution with exceptional detail
+                        and clarity.
+                    </p>
+                </a>
+
+                <a href="/signup" class="feature-card" data-aos="fade-up" data-aos-delay="300"
+                    style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">Custom Aspect Ratios</h3>
+                    <p class="feature-description">
+                        Create images in square (1:1), landscape (16:9), or portrait (9:16) formats to fit your needs
+                        perfectly.
+                    </p>
+                </a>
+
+                <a href="/signup" class="feature-card" data-aos="fade-up" data-aos-delay="100"
+                    style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="feature-icon">⚙️</div>
+                    <h3 class="feature-title">Batch Generation</h3>
+                    <p class="feature-description">
+                        Generate up to 4 images at once from a single prompt. Perfect for exploring variations and
+                        options.
+                    </p>
+                </a>
+
+                <a href="/signup" class="feature-card" data-aos="fade-up" data-aos-delay="200"
+                    style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="feature-icon">💾</div>
+                    <h3 class="feature-title">Save & Download</h3>
+                    <p class="feature-description">
+                        All generated images are automatically saved to your account and can be downloaded anytime in
+                        full quality.
+                    </p>
+                </a>
+
+                <a href="/signup" class="feature-card" data-aos="fade-up" data-aos-delay="300"
+                    style="text-decoration: none; color: inherit; cursor: pointer;">
+                    <div class="feature-icon">🚀</div>
+                    <h3 class="feature-title">Fast Generation</h3>
+                    <p class="feature-description">
+                        Get your images in seconds with our optimized infrastructure. FLUX.1-schnell delivers results in
+                        under 10 seconds.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="landing-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-tag">Pricing</div>
+                <h2 class="section-title">Simple, Transparent Pricing</h2>
+                <p class="section-subtitle">Choose the plan that fits your creative needs</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="pricing-name">Free</h3>
+                    <div class="pricing-price">$0</div>
+                    <p class="pricing-period">Forever free</p>
+                    <ul class="pricing-features">
+                        <li>20 images/month</li>
+                        <li>All AI models</li>
+                        <li>All aspect ratios</li>
+                        <li>Full resolution downloads</li>
+                        <li>Community support</li>
+                    </ul>
+                    <a href="/signup" class="btn-secondary" style="width: 100%; text-align: center; display: block;">Get
+                        Started</a>
+                </div>
+
+                <div class="pricing-card featured" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-badge">Most Popular</div>
+                    <h3 class="pricing-name">Pro</h3>
+                    <div class="pricing-price">$19</div>
+                    <p class="pricing-period">per month</p>
+                    <ul class="pricing-features">
+                        <li>500 images/month</li>
+                        <li>Priority generation</li>
+                        <li>Batch generation (4x)</li>
+                        <li>Cloud storage</li>
+                        <li>Priority support</li>
+                        <li>Commercial license</li>
+                    </ul>
+                    <a href="/signup" class="btn-primary" style="width: 100%; text-align: center; display: block;">Start
+                        Free Trial</a>
+                </div>
+
+                <div class="pricing-card" data-aos="fade-up" data-aos-delay="300">
+                    <h3 class="pricing-name">Enterprise</h3>
+                    <div class="pricing-price">Custom</div>
+                    <p class="pricing-period">Contact us</p>
+                    <ul class="pricing-features">
+                        <li>Unlimited images</li>
+                        <li>Custom AI models</li>
+                        <li>API access</li>
+                        <li>Dedicated support</li>
+                        <li>Team collaboration</li>
+                        <li>Advanced analytics</li>
+                    </ul>
+                    <a href="mailto:contact@aiimages.com" class="btn-secondary"
+                        style="width: 100%; text-align: center; display: block;">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="landing-container">
+            <div class="section-header" data-aos="fade-up">
+                <div class="section-tag">Testimonials</div>
+                <h2 class="section-title">Loved by Creators Worldwide</h2>
+                <p class="section-subtitle">See what our users have to say</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+                    <p class="testimonial-text">
+                        "This platform has completely transformed how I create content. The image generation is
+                        mind-blowing, and the chatbot helps me brainstorm ideas instantly."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SM</div>
+                        <div class="testimonial-info">
+                            <h4>Sarah Mitchell</h4>
+                            <p>Content Creator</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+                    <p class="testimonial-text">
+                        "As a developer, I love the API access and the clean interface. The voice-to-text feature saves
+                        me hours of manual transcription work every week."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JD</div>
+                        <div class="testimonial-info">
+                            <h4>James Davidson</h4>
+                            <p>Software Engineer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="300">
+                    <p class="testimonial-text">
+                        "The summarization tool is a game-changer for research. I can process dozens of papers in
+                        minutes instead of hours. Highly recommend!"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">EP</div>
+                        <div class="testimonial-info">
+                            <h4>Emily Parker</h4>
+                            <p>Research Analyst</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="landing-container">
+            <div class="cta-box" data-aos="zoom-in" data-aos-duration="600">
+                <h2 class="cta-title">Ready to Get Started?</h2>
+                <p class="cta-subtitle">Join thousands of users who are already transforming their workflow with AI</p>
+                <div class="hero-cta">
+                    <a href="/signup" class="btn-primary">Start Free Trial</a>
+                    <a href="/login" class="btn-secondary">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="landing-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="/services/image-generator">AI Image Generator</a></li>
+                        <li><a href="/profile">Profile</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><a href="#terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 AI Image Generator. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS Animation Library JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+    </script>
+</body>
+
+</html>

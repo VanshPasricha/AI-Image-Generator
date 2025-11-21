@@ -6,17 +6,16 @@ import { UserProfileManager, HistoryManager } from '../_lib/user-manager.js';
 export default asyncHandler(async function handler(req, res) {
   validateMethod(['GET'])(req, res);
 
-  const user = await verifyAuth(req, res);
-  if (!user) return;
-
-  try {
-    const profile = await UserProfileManager.getOrCreateProfile(user.uid);
-    return res.status(200).json(profile);
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      throw error;
+  // Auth disabled for presentation - return mock profile
+  const mockProfile = {
+    profile: {
+      name: 'Demo User',
+      email: 'demo@example.com',
+      displayName: 'Demo User',
+      uid: 'demo-uid',
+      createdAt: new Date().toISOString()
     }
-    console.error('Get profile error:', error);
-    throw new ValidationError('Failed to get profile');
-  }
+  };
+
+  return res.status(200).json(mockProfile);
 });

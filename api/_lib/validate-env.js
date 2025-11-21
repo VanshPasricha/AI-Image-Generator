@@ -13,9 +13,9 @@ export function validateEnv() {
     'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
     'NEXT_PUBLIC_FIREBASE_APP_ID'
   ];
-  
+
   const missing = required.filter(key => !process.env[key]);
-  
+
   if (missing.length > 0) {
     console.error('Missing required environment variables:', missing.join(', '));
     if (typeof window === 'undefined') {
@@ -23,43 +23,38 @@ export function validateEnv() {
       throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
     }
   }
-  
+
   // In development, provide more helpful error message
-  if (process.env.NODE_ENV !== 'production') {
-    console.error('\n💡 Development setup:');
-    console.error('1. Copy .env.example to .env');
-    console.error('2. Fill in the missing values in .env');
-    console.error('3. Restart the development server');
-    
-    return false;
-  }
-  
+
+
   // Validate specific formats
   const errors = [];
-  
+
   // HF_API_KEY should start with "hf_"
   if (!process.env.HF_API_KEY.startsWith('hf_')) {
     errors.push('HF_API_KEY should start with "hf_"');
   }
-  
+
   // Firebase project ID validation
   if (!/^[a-z0-9-]+$/.test(process.env.FIREBASE_PROJECT_ID)) {
     errors.push('FIREBASE_PROJECT_ID contains invalid characters');
   }
-  
+
   // Firebase private key format validation
   const privateKey = process.env.FIREBASE_PRIVATE_KEY;
   if (!privateKey.includes('-----BEGIN PRIVATE KEY-----') || !privateKey.includes('-----END PRIVATE KEY-----')) {
     errors.push('FIREBASE_PRIVATE_KEY should be a valid PEM-formatted private key');
   }
-  
+
   if (errors.length > 0) {
     console.error('❌ Environment variable validation errors:', errors);
-    return false;
+    console.error('❌ Environment variable validation errors:', errors);
+    return { valid: false, errors };
   }
-  
+
   console.log('✅ Environment variables validated successfully');
-  return true;
+  console.log('✅ Environment variables validated successfully');
+  return { valid: true };
 }
 
 // Export environment info for debugging (only in development)
@@ -67,7 +62,7 @@ export function getEnvironmentInfo() {
   if (process.env.NODE_ENV === 'production') {
     return { environment: 'production' };
   }
-  
+
   return {
     environment: process.env.NODE_ENV || 'development',
     hasHFKey: !!process.env.HF_API_KEY,

@@ -27,6 +27,7 @@ if (missingFields.length > 0) {
 // Check if Firebase is already initialized
 if (!admin.apps.length) {
   try {
+    console.log('Initializing Firebase Admin...');
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId: firebaseConfig.projectId,
@@ -49,6 +50,7 @@ if (!admin.apps.length) {
 export const auth = admin.auth();
 export const firestore = admin.firestore();
 export const storage = admin.storage();
+export const db = firestore;
 
 // Configure Firestore settings
 try {
@@ -165,10 +167,10 @@ export const firebaseHelpers = {
           contentType: contentType
         }
       });
-      
+
       // Make file public
       await file.makePublic();
-      
+
       return file.publicUrl();
     } catch (error) {
       console.error('Failed to upload file:', error);
